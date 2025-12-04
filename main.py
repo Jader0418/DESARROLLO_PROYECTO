@@ -299,3 +299,4 @@ def read_empresas_registro_html(request: Request, session: SessionDep, query: Op
         name="empresas.html",
         context={"empresas": empresas, "titulo": "Listado de Proveedores (Ruta Registro)", "query": query}
     )
+
