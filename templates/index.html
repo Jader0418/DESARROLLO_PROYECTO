@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Distribuidora JS | Portal B2B Funcional</title>
+    <title>Distribuidora JS | Portal de Importacion de Tecnologia </title>
 
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
     <style>
@@ -68,7 +68,6 @@
                     <div class="producto-card">
 
 
-[Image of a modern black smartphone with a large screen]
 
                         <div class="producto-info">
                             <h3>iPhone 16 Pro Max</h3>
@@ -101,8 +100,6 @@
                     <div class="producto-card">
 
 
-[Image of a quadcopter drone with a camera]
-
                         <div class="producto-info">
                             <h3>Drone 4K Pro (Gama Alta)</h3>
                             <p>Precio Importación (USD): $210.00</p>
@@ -118,35 +115,35 @@
         <div class="content-section" id="cliente">
             <h2>👤 Registro de Cliente</h2>
             <div class="registration-area">
-                <p>Ingresa tus datos para registrarte como cliente. **(Datos guardados en DB)**</p>
+                <p>Ingresa tus datos para registrarte como cliente. </p>
                 <form id="clienteForm">
                     <div class="form-group">
                         <label for="c_nombre">Nombre Completo:</label>
-                        <input type="text" id="c_nombre" required value="Daniela Ruiz">
+                        <input type="text" id="c_nombre" required value="">
                     </div>
                     <div class="form-group">
                         <label for="c_email">Email (Usuario):</label>
-                        <input type="email" id="c_email" required value="daniela.ruiz@test.com">
+                        <input type="email" id="c_email" required value="">
                     </div>
                     <div class="form-group">
                         <label for="c_password">Contraseña (Hash):</label>
-                        <input type="password" id="c_password" required value="seguro123">
+                        <input type="password" id="c_password" required value="">
                     </div>
                     <div class="form-group">
                         <label for="c_pais">País:</label>
-                        <input type="text" id="c_pais" required value="Colombia">
+                        <input type="text" id="c_pais" required value="">
                     </div>
                     <div class="form-group">
                         <label for="c_ciudad">Ciudad:</label>
-                        <input type="text" id="c_ciudad" required value="Medellín">
+                        <input type="text" id="c_ciudad" required value="">
                     </div>
                     <div class="form-group">
                         <label for="c_direccion">Dirección de Envío:</label>
-                        <input type="text" id="c_direccion" required value="Carrera 45 #10-20">
+                        <input type="text" id="c_direccion" required value="">
                     </div>
                     <div class="form-group">
                         <label for="c_telefono">Teléfono (Opcional):</label>
-                        <input type="tel" id="c_telefono" value="3001234567">
+                        <input type="tel" id="c_telefono" value="">
                     </div>
                     <button type="submit" class="btn-action">Registrar Cliente</button>
                     <div id="status-cliente" class="status-message"></div>
@@ -157,26 +154,26 @@
         <div class="content-section" id="empresa">
             <h2>🏭 Registro de Proveedor</h2>
             <div class="registration-area">
-                <p>Registra la empresa proveedora de China. **(El logo se sube a Supabase Storage)**</p>
+                <p>Registra la empresa proveedora de China.</p>
                 <form id="empresaForm">
                     <div class="form-group">
                         <label for="e_nombre">Nombre de la Empresa:</label>
-                        <input type="text" id="e_nombre" required value="New Gen Tech">
+                        <input type="text" id="e_nombre" required value="">
                     </div>
                     <div class="form-group">
                         <label for="e_contacto">Nombre de Contacto:</label>
-                        <input type="text" id="e_contacto" required value="Wei Chen">
+                        <input type="text" id="e_contacto" required value="">
                     </div>
                     <div class="form-group">
                         <label for="e_email">Email de Contacto:</label>
-                        <input type="email" id="e_email" required value="contacto@newgen.cn">
+                        <input type="email" id="e_email" required value="">
                     </div>
                     <div class="form-group">
                         <label for="e_producto">Tipo de Producto:</label>
-                        <input type="text" id="e_producto" required value="Smartwatch y Pulseras">
+                        <input type="text" id="e_producto" required value="">
                     </div>
                     <div class="form-group">
-                        <label for="e_imagen">Imagen (Logo) - Subir a Supabase:</label>
+                        <label for="e_imagen">Imagen (Logo):</label>
                         <input type="file" id="e_imagen" accept="image/*" onchange="previewImage(event)">
                         <img id="imagePreview" class="image-preview" alt="Vista previa del logo">
                     </div>
