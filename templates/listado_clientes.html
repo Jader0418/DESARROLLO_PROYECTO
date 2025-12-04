@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>👤 {{ titulo }}</h2>
+    <p>Lista de todos los clientes registrados.</p>
+
+    <div class="actions" style="margin-bottom: 20px;">
+        <a href="/clientes/registro"><button style="background-color: #2ecc71;">➕ Registrar Nuevo Cliente</button></a>
+    </div>
+
+    {% if clientes %}
+        <ul class="data-list">
+        {% for cliente in clientes %}
+            <li>
+                <div class="data-details">
+                    <strong>ID: {{ cliente.id }}</strong> -
+                    {{ cliente.nombre }}
+                    <small>({{ cliente.email }}) | País: {{ cliente.pais }}</small>
+                </div>
+                <div class="actions">
+                    <a href="/clientes/{{ cliente.id }}"><button>Ver Detalle</button></a>
+                    </div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No hay clientes registrados.</p>
+    {% endif %}
+{% endblock %}

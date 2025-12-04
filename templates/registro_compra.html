@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>🛒 {{ titulo }}</h2>
+    <p>Selecciona un Cliente y una Empresa. Luego, escoge el producto de la tabla para iniciar la orden de compra.</p>
+
+    <div class="registration-area">
+        <form id="compraForm">
+            <div style="display: grid; grid-template-columns: 1fr 2fr; gap: 30px; margin-bottom: 30px;">
+
+                <div>
+                    <h3>1. Cliente y Pedido</h3>
+                    <div class="form-group">
+                        <label for="compra_cliente_id">ID Cliente:</label>
+                        <input type="number" id="compra_cliente_id" required placeholder="Ej: 1 (Debe existir)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="compra_empresa_id">ID Empresa (Proveedor):</label>
+                        <input type="number" id="compra_empresa_id" required placeholder="Ej: 1 (Debe existir)" onchange="fetchProductosByEmpresa(this.value)">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="compra_cantidad">Cantidad (Unidades):</label>
+                        <input type="number" id="compra_cantidad" required value="100">
+                    </div>
+
+                    <h4 style="color: #1a5276;">Producto Seleccionado:</h4>
+                    <div class="form-group">
+                        <input type="text" id="producto_seleccionado_nombre" readonly style="background-color: #f0f0f0; font-weight: bold; border: 1px solid #ccc;">
+                        <input type="hidden" id="compra_producto_id">
+                        <small id="producto-info" style="color: #777;"></small>
+                    </div>
+
+                    <button type="submit" class="btn-action">Registrar Compra y Guardar</button>
+                    <div id="status-compra" class="status-message"></div>
+                </div>
+
+                <div>
+                    <h3>2. Catálogo del Proveedor</h3>
+                    <p id="proveedor_actual_nombre">Esperando ID de Empresa...</p>
+                    <table class="data-table" id="productos-table">
+                        <thead>
+                            <tr>
+                                <th>Producto</th>
+                                <th>Costo (USD)</th>
+                                <th>Stock</th>
+                                <th>Acción</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr><td colspan="4">Ingrese el ID de la Empresa para ver los productos.</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script>
+    const API_URL = 'http://127.0.0.1:8000';
+
+    function setStatus(elementId, message, type = 'success') {
+        const el = document.getElementById(elementId);
+        el.className = `status-message ${type}`;
+        el.textContent = message;
+        setTimeout(() => { el.textContent = ''; el.className = 'status-message'; }, 7000);
+    }
+
+    let productosCache = {};
+    let productoSeleccionadoId = null;
+
+    // --- FUNCIÓN DE SELECCIÓN DE FILA ---
+    function seleccionarProducto(btn, productId, productName, precio, stock) {
+        // Deseleccionar todas las filas visualmente
+        document.querySelectorAll('#productos-table tbody tr').forEach(row => {
+            row.style.backgroundColor = 'white';
+        });
+
+        // Resaltar la fila seleccionada
+        btn.closest('tr').style.backgroundColor = '#fff0e0';
+
+        // Actualizar el estado de la compra
+        productoSeleccionadoId = productId;
+        document.getElementById('compra_producto_id').value = productId;
+        document.getElementById('producto_seleccionado_nombre').value = productName;
+
+        const info = document.getElementById('producto-info');
+        const precioCOP = (precio * 4000).toLocaleString('es-CO', { style: 'currency', currency: 'COP' });
+        info.innerHTML = `Costo Unitario: <strong>$${precio.toFixed(2)} USD</strong>. Stock Disponible: <strong>${stock}</strong>.<br> (Aprox. Venta en COP: ${precioCOP})`;
+    }
+
+
+    // --- FUNCIÓN INTERACTIVA: Carga productos según el ID de la Empresa (en Tabla) ---
+    async function fetchProductosByEmpresa(empresaId) {
+        const tbody = document.querySelector('#productos-table tbody');
+        const tituloProveedor = document.getElementById('proveedor_actual_nombre');
+
+        tbody.innerHTML = '<tr><td colspan="4">Cargando productos...</td></tr>';
+
+        // Limpiar selección actual
+        productoSeleccionadoId = null;
+        document.getElementById('producto_seleccionado_nombre').value = '';
+        document.getElementById('producto-info').innerHTML = '';
+
+
+        if (!empresaId) {
+            tbody.innerHTML = '<tr><td colspan="4">Ingrese el ID de la Empresa para ver los productos.</td></tr>';
+            tituloProveedor.textContent = 'Esperando ID de Empresa...';
+            return;
+        }
+
+        try {
+            const response = await fetch(`${API_URL}/productos/${empresaId}`);
+            const data = await response.json();
+
+            tbody.innerHTML = '';
+            productosCache = {};
+
+            if (data.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="4">Esta empresa no tiene productos registrados.</td></tr>';
+                tituloProveedor.textContent = `Proveedor ID ${empresaId}: No hay productos.`;
+            } else {
+                tituloProveedor.textContent = `Productos disponibles (Total: ${data.length})`;
+                data.forEach(p => {
+                    productosCache[p.id] = { precio: p.precio_usd, stock: p.stock };
+
+                    const row = tbody.insertRow();
+                    row.innerHTML = `
+                        <td>${p.nombre}</td>
+                        <td>$${p.precio_usd.toFixed(2)} USD</td>
+                        <td>${p.stock}</td>
+                        <td>
+                            <button type="button" class="btn-action"
+                                onclick="seleccionarProducto(this, ${p.id}, '${p.nombre}', ${p.precio_usd}, ${p.stock})">Seleccionar</button>
+                        </td>
+                    `;
+                });
+            }
+
+        } catch (error) {
+            tbody.innerHTML = '<tr><td colspan="4">Error al cargar productos. Asegúrese que la Empresa exista.</td></tr>';
+            console.error(error);
+        }
+    }
+
+    // --- ENVÍO DEL FORMULARIO DE COMPRA ---
+    document.getElementById('compraForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const empresaId = parseInt(document.getElementById('compra_empresa_id').value);
+        const cantidad = parseInt(document.getElementById('compra_cantidad').value);
+
+        if (!productoSeleccionadoId) {
+            setStatus('status-compra', 'Debe seleccionar un producto de la tabla antes de continuar.', 'error');
+            return;
+        }
+
+        const productoData = productosCache[productoSeleccionadoId];
+
+        // Se envía precio_unitario y precio_total, aunque el backend recalcula el total/margen
+        const payload = {
+            cliente_id: parseInt(document.getElementById('compra_cliente_id').value),
+            empresa_id: empresaId,
+            producto_id: productoSeleccionadoId,
+            cantidad: cantidad,
+            precio_unitario: productoData.precio,
+            precio_total: productoData.precio * cantidad,
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/compras/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                setStatus('status-compra', `Error: ${data.detail || 'Fallo al registrar compra.'}`, 'error');
+                return;
+            }
+
+            setStatus('status-compra', `Compra ID ${data.id} registrada. Margen Estimado: $${data.margen_estimado.toFixed(2)} USD.`, 'success');
+
+        } catch (error) {
+            setStatus('status-compra', 'Error de conexión con la API.', 'error');
+        }
+    });
+</script>
+{% endblock %}

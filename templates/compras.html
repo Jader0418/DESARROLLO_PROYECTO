@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>📦 {{ titulo }}</h2>
+    <p>Registro y estado de todas las órdenes de importación.</p>
+
+    {% if compras %}
+        <table border="1" style="width: 100%; border-collapse: collapse; margin-top: 20px;">
+            <thead>
+                <tr style="background-color: #ecf0f1;">
+                    <th>ID Compra</th>
+                    <th>Producto</th>
+                    <th>Cantidad</th>
+                    <th>Costo Total</th>
+                    <th>Margen Est.</th>
+                    <th>Estado</th>
+                    <th>ID Cliente</th>
+                    <th>ID Empresa</th>
+                </tr>
+            </thead>
+            <tbody>
+            {% for compra in compras %}
+                <tr>
+                    <td>{{ compra.id }}</td>
+                    <td>{{ compra.producto_nombre }}</td>
+                    <td>{{ compra.cantidad }}</td>
+                    <td>${{ "%.2f"|format(compra.precio_total) }}</td>
+                    <td style="color: green;">${{ "%.2f"|format(compra.margen_estimado) }}</td>
+                    <td><strong>{{ compra.estado_pedido }}</strong></td>
+                    <td>{{ compra.cliente_id }}</td>
+                    <td>{{ compra.empresa_id }}</td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% else %}
+        <p>No hay compras registradas.</p>
+    {% endif %}
+{% endblock %}

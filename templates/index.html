@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Distribuidora JS | Portal B2B Funcional</title>
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --color-principal: #1a5276;
+            --color-secundario: #5499c7;
+            --color-contraste: #f39c12;
+            --color-fondo: #f8f9fa;
+            --color-texto: #333;
+        }
+
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: var(--color-fondo); color: var(--color-texto); }
+        .header { background-color: var(--color-principal); color: white; padding: 30px 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
+        .nav-buttons { display: flex; gap: 15px; margin-top: 20px; }
+        .nav-buttons button, .btn-action {
+            background-color: var(--color-secundario); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: background-color 0.3s, transform 0.1s;
+        }
+        .nav-buttons button:hover, .btn-action:hover { background-color: var(--color-principal); transform: translateY(-2px); }
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        .content-section { display: none; animation: fadeIn 0.5s; margin-top: 25px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .registration-area, .product-area { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--color-principal); }
+        .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; transition: border-color 0.3s; }
+        .status-message { padding: 10px; margin-top: 15px; border-radius: 6px; font-weight: bold; }
+        .success { background-color: #d4edda; color: #1e8449; }
+        .error { background-color: #f8d7da; color: #dc3545; }
+        .productos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
+        .producto-card { border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; transition: box-shadow 0.3s; }
+        .producto-card:hover { box-shadow: 0 8px 15px rgba(52, 152, 219, 0.2); }
+        .producto-card img { width: 100%; height: 180px; object-fit: cover; }
+        .producto-info { padding: 15px; }
+        .precio { color: var(--color-contraste); font-size: 1.6em; font-weight: 700; }
+        .producto-info h3 { margin-top: 5px; color: var(--color-principal); }
+        .nav-buttons .active { background-color: var(--color-contraste); }
+        .image-preview { margin-top: 10px; width: 100%; max-height: 150px; object-fit: contain; border: 1px solid #ddd; display: none; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <h1>Distribuidora JS | Portal de Importación de Tecnología 🌐</h1>
+
+        <div class="nav-buttons">
+            <button onclick="showSection('inicio', this)" class="active">Catálogo de Productos</button>
+            <button onclick="showSection('cliente', this)">👤 Clientes / Registro</button>
+            <button onclick="showSection('empresa', this)">🏭 Empresas / Proveedores</button>
+            <button onclick="window.location.href='/dashboard/'">📊 Ver Dashboard & Reportes</button>
+            <button onclick="window.location.href='/compras/registro'">🛒 Nueva Compra</button>
+            <button onclick="window.location.href='/clientes/listado'">Ver Registros</button>
+        </div>
+    </div>
+
+    <div class="container">
+
+        <div class="content-section" id="inicio" style="display: block;">
+            <h2>Productos Disponibles para Importación</h2>
+            <div class="product-area">
+                <div class="productos-grid">
+
+                    <div class="producto-card">
+
+
+[Image of a modern black smartphone with a large screen]
+
+                        <div class="producto-info">
+                            <h3>iPhone 16 Pro Max</h3>
+                            <p>Precio Importación (USD): $1100.00</p>
+                            <p class="precio">COP: $4'400.000</p>
+                            <p>Proveedor: Foxconn/Apple SCM</p>
+                        </div>
+                    </div>
+
+                    <div class="producto-card">
+
+                        <div class="producto-info">
+                            <h3>Audífonos Noise-Cancel HiFi</h3>
+                            <p>Precio Importación (USD): $180.00</p>
+                            <p class="precio">COP: $720.000</p>
+                            <p>Proveedor: AudioTech Pro</p>
+                        </div>
+                    </div>
+
+                    <div class="producto-card">
+
+                        <div class="producto-info">
+                            <h3>Laptop Gamer RTX 5080</h3>
+                            <p>Precio Importación (USD): $1750.00</p>
+                            <p class="precio">COP: $7'000.000</p>
+                            <p>Proveedor: Future Computing Co.</p>
+                        </div>
+                    </div>
+
+                    <div class="producto-card">
+
+
+[Image of a quadcopter drone with a camera]
+
+                        <div class="producto-info">
+                            <h3>Drone 4K Pro (Gama Alta)</h3>
+                            <p>Precio Importación (USD): $210.00</p>
+                            <p class="precio">COP: $840.000</p>
+                            <p>Proveedor: SkyCam Electronics</p>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+
+        <div class="content-section" id="cliente">
+            <h2>👤 Registro de Cliente</h2>
+            <div class="registration-area">
+                <p>Ingresa tus datos para registrarte como cliente. **(Datos guardados en DB)**</p>
+                <form id="clienteForm">
+                    <div class="form-group">
+                        <label for="c_nombre">Nombre Completo:</label>
+                        <input type="text" id="c_nombre" required value="Daniela Ruiz">
+                    </div>
+                    <div class="form-group">
+                        <label for="c_email">Email (Usuario):</label>
+                        <input type="email" id="c_email" required value="daniela.ruiz@test.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="c_password">Contraseña (Hash):</label>
+                        <input type="password" id="c_password" required value="seguro123">
+                    </div>
+                    <div class="form-group">
+                        <label for="c_pais">País:</label>
+                        <input type="text" id="c_pais" required value="Colombia">
+                    </div>
+                    <div class="form-group">
+                        <label for="c_ciudad">Ciudad:</label>
+                        <input type="text" id="c_ciudad" required value="Medellín">
+                    </div>
+                    <div class="form-group">
+                        <label for="c_direccion">Dirección de Envío:</label>
+                        <input type="text" id="c_direccion" required value="Carrera 45 #10-20">
+                    </div>
+                    <div class="form-group">
+                        <label for="c_telefono">Teléfono (Opcional):</label>
+                        <input type="tel" id="c_telefono" value="3001234567">
+                    </div>
+                    <button type="submit" class="btn-action">Registrar Cliente</button>
+                    <div id="status-cliente" class="status-message"></div>
+                </form>
+            </div>
+        </div>
+
+        <div class="content-section" id="empresa">
+            <h2>🏭 Registro de Proveedor</h2>
+            <div class="registration-area">
+                <p>Registra la empresa proveedora de China. **(El logo se sube a Supabase Storage)**</p>
+                <form id="empresaForm">
+                    <div class="form-group">
+                        <label for="e_nombre">Nombre de la Empresa:</label>
+                        <input type="text" id="e_nombre" required value="New Gen Tech">
+                    </div>
+                    <div class="form-group">
+                        <label for="e_contacto">Nombre de Contacto:</label>
+                        <input type="text" id="e_contacto" required value="Wei Chen">
+                    </div>
+                    <div class="form-group">
+                        <label for="e_email">Email de Contacto:</label>
+                        <input type="email" id="e_email" required value="contacto@newgen.cn">
+                    </div>
+                    <div class="form-group">
+                        <label for="e_producto">Tipo de Producto:</label>
+                        <input type="text" id="e_producto" required value="Smartwatch y Pulseras">
+                    </div>
+                    <div class="form-group">
+                        <label for="e_imagen">Imagen (Logo) - Subir a Supabase:</label>
+                        <input type="file" id="e_imagen" accept="image/*" onchange="previewImage(event)">
+                        <img id="imagePreview" class="image-preview" alt="Vista previa del logo">
+                    </div>
+
+                    <button type="submit" class="btn-action">Registrar Proveedor</button>
+                    <div id="status-empresa" class="status-message"></div>
+                </form>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        // 🚨 CONFIGURACIÓN DE SUPABASE (REEMPLAZA ESTOS VALORES REALES)
+        const SUPABASE_URL = 'https://[TU_PROYECTO_ID].supabase.co';
+        const SUPABASE_KEY = '[TU_CLAVE_ANON_PUBLICO]';
+        const SUPABASE_BUCKET = 'logos-empresas';
+
+        const API_URL = 'http://127.0.0.1:8000';
+
+        // --- FUNCIONES DE UTILIDAD ---
+        function setStatus(elementId, message, type = 'success') {
+            const el = document.getElementById(elementId);
+            el.className = `status-message ${type}`;
+            el.textContent = message;
+            setTimeout(() => { el.textContent = ''; el.className = 'status-message'; }, 7000);
+        }
+
+        // --- FUNCIÓN CLAVE: Muestra/Oculta Secciones (para los botones Cliente/Empresa) ---
+        function showSection(sectionId, clickedButton) {
+            document.querySelectorAll('.content-section').forEach(section => {
+                section.style.display = 'none';
+            });
+            document.querySelectorAll('.nav-buttons button').forEach(btn => {
+                btn.classList.remove('active');
+            });
+
+            document.getElementById(sectionId).style.display = 'block';
+            if (clickedButton) {
+                clickedButton.classList.add('active');
+            }
+        }
+
+        // --- INICIALIZACIÓN: Muestra el Catálogo por defecto ---
+        window.onload = () => {
+            showSection('inicio', document.querySelector('.nav-buttons button:first-child'));
+        };
+
+        // Función para previsualizar la imagen antes de subir
+        function previewImage(event) {
+            const preview = document.getElementById('imagePreview');
+            const file = event.target.files[0];
+            if (file) {
+                preview.src = URL.createObjectURL(file);
+                preview.style.display = 'block';
+            } else {
+                preview.style.display = 'none';
+            }
+        }
+
+        // -------------------------------------------------------------------
+        // FUNCIÓN CLAVE: SUBIR ARCHIVO DIRECTO A SUPABASE STORAGE
+        // -------------------------------------------------------------------
+        async function uploadImageToSupabase(file, bucketName) {
+            const fileExt = file.name.split('.').pop();
+            const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+            const filePath = `public/${fileName}`;
+
+            const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${bucketName}/${filePath}`;
+
+            const response = await fetch(uploadUrl, {
+                method: 'POST', // Usamos POST para subir
+                headers: {
+                    'Authorization': `Bearer ${SUPABASE_KEY}`,
+                    'Content-Type': file.type,
+                    'x-upsert': 'true' // Reemplazar si el archivo ya existe
+                },
+                body: file,
+            });
+
+            if (!response.ok) {
+                throw new Error(`Fallo al subir a Supabase: ${response.statusText}`);
+            }
+
+            // Generar la URL pública para el registro en la DB
+            const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${filePath}`;
+            return publicUrl;
+        }
+
+
+        // -------------------------------------------------------------------
+        // 1. REGISTRO DE CLIENTE
+        // -------------------------------------------------------------------
+        document.getElementById('clienteForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const payload = {
+                nombre: document.getElementById('c_nombre').value,
+                email: document.getElementById('c_email').value,
+                password_hash: document.getElementById('c_password').value,
+                pais: document.getElementById('c_pais').value,
+                ciudad: document.getElementById('c_ciudad').value,
+                direccion_envio: document.getElementById('c_direccion').value,
+                telefono: document.getElementById('c_telefono').value || null,
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/clientes/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    setStatus('status-cliente', `Error: ${data.detail || 'Fallo al registrar.'}`, 'error');
+                    return;
+                }
+
+                setStatus('status-cliente', `Cliente "${data.nombre}" (ID: ${data.id}) registrado y GUARDADO en DB.`, 'success');
+
+            } catch (error) {
+                setStatus('status-cliente', 'Error de conexión con la API.', 'error');
+            }
+        });
+
+
+        // -------------------------------------------------------------------
+        // 2. REGISTRO DE EMPRESA (Subida a Supabase + Registro en FastAPI)
+        // -------------------------------------------------------------------
+        document.getElementById('empresaForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const imageFile = document.getElementById('e_imagen').files[0];
+            let imageUrl = '';
+
+            // 1. Subir la imagen a Supabase (si existe)
+            if (imageFile) {
+                setStatus('status-empresa', 'Subiendo imagen a Supabase Storage...', 'success');
+                try {
+                    // Usamos el bucket definido al inicio
+                    imageUrl = await uploadImageToSupabase(imageFile, SUPABASE_BUCKET);
+                } catch (error) {
+                    setStatus('status-empresa', `Error Supabase: ${error.message}`, 'error');
+                    return;
+                }
+            }
+
+            // 2. Registrar la Empresa con la URL de la imagen (o sin ella)
+            const payload = {
+                nombre_empresa: document.getElementById('e_nombre').value,
+                contacto_nombre: document.getElementById('e_contacto').value,
+                contacto_email: document.getElementById('e_email').value,
+                tipo_producto: document.getElementById('e_producto').value,
+                pais_origen: "China",
+                imagen_url: imageUrl || null
+            };
+
+            try {
+                const response = await fetch(`${API_URL}/empresas/`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload),
+                });
+                const data = await response.json();
+
+                if (!response.ok) {
+                    setStatus('status-empresa', `Error FastAPI: ${data.detail || 'Fallo al registrar empresa.'}`, 'error');
+                    return;
+                }
+
+                setStatus('status-empresa', `Proveedor registrado y datos GUARDADOS. ID: ${data.id}.`, 'success');
+            } catch (error) {
+                setStatus('status-empresa', 'Error de conexión con la API.', 'error');
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>🏢 {{ titulo }}</h2>
+    <p>Búsqueda Inmersa: Busca por nombre de empresa o tipo de producto.</p>
+
+    <div class="actions" style="margin-bottom: 20px;">
+        <a href="/empresas/registro"><button style="background-color: #2ecc71;">➕ Registrar Nuevo Proveedor</button></a>
+    </div>
+
+    <form class="search-form" action="/empresas/listado" method="GET">
+        <input type="text" name="query" placeholder="Buscar proveedor o producto..." value="{{ query or '' }}">
+        <button type="submit">Buscar</button>
+    </form>
+
+    {% if empresas %}
+        <ul class="data-list">
+        {% for empresa in empresas %}
+            <li>
+                <div class="data-details">
+                    <strong>ID: {{ empresa.id }}</strong> -
+                    {{ empresa.nombre_empresa }} | Producto: <strong>{{ empresa.tipo_producto }}</strong>
+                    {% if empresa.imagen_url %}
+                        <br><img src="{{ empresa.imagen_url }}" alt="Logo" style="height: 30px; margin-top: 5px;">
+                    {% endif %}
+                </div>
+                <div class="actions">
+                    <small>Contacto: {{ empresa.contacto_email }}</small>
+                </div>
+            </li>
+        {% endfor %}
+        </ul>
+    {% else %}
+        <p>No se encontraron empresas con el criterio de búsqueda.</p>
+    {% endif %}
+{% endblock %}

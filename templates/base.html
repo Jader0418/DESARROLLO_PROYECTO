@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ titulo }} | Distribuidora JS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --color-principal: #1a5276;
+            --color-secundario: #5499c7;
+            --color-contraste: #f39c12;
+            --color-fondo: #f8f9fa;
+            --color-texto: #333;
+            --color-borde: #e0e0e0;
+        }
+
+        body { font-family: 'Poppins', sans-serif; margin: 0; background-color: var(--color-fondo); color: var(--color-texto); line-height: 1.6; }
+        .header { background-color: var(--color-principal); color: white; padding: 25px 40px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
+        .header h1 { margin: 0; font-weight: 600; font-size: 1.8em; }
+        .nav a { color: #f4f4f4; margin-right: 25px; text-decoration: none; padding: 10px 15px; border-radius: 6px; transition: background-color 0.3s; font-weight: 400; }
+        .nav a:hover { background-color: #34495e; }
+        .container { max-width: 1300px; margin: 30px auto; padding: 30px; background: white; border-radius: 15px; box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1); }
+        h2 { color: var(--color-principal); border-bottom: 2px solid var(--color-secundario); padding-bottom: 10px; margin-top: 0; font-weight: 600; }
+
+        /* Estilos de Botones y Formularios */
+        .btn-action { background-color: var(--color-contraste); color: white; border: none; padding: 10px 20px; border-radius: 6px; cursor: pointer; transition: background-color 0.3s; }
+        .btn-action:hover { background-color: #e67e22; }
+
+        /* Estilos de Tablas Generales */
+        .data-table { width: 100%; border-collapse: separate; border-spacing: 0; margin-top: 20px; }
+        .data-table th, .data-table td { padding: 12px; text-align: left; border-bottom: 1px solid var(--color-borde); }
+        .data-table th { background-color: var(--color-principal); color: white; font-weight: 600; }
+        .data-table tbody tr:hover { background-color: #f0f8ff; cursor: pointer; }
+
+        /* Estilos para Contenido Específico */
+        .registration-area input, .registration-area select, .registration-area textarea {
+            border: 1px solid var(--color-borde);
+            padding: 10px;
+            border-radius: 4px;
+            width: 100%;
+            box-sizing: border-box;
+            margin-top: 5px;
+        }
+    </style>
+    {% block head_extra %}{% endblock %}
+</head>
+<body>
+    <div class="header">
+        <h1>Distribuidora JS | Portal B2B 🚀</h1>
+        <div class="nav">
+            <a href="/">Inicio/Catálogo</a>
+            <a href="/clientes/registro">👤 Registro Cliente</a>
+            <a href="/empresas/registro">🏭 Registro Proveedor</a>
+            <a href="/productos/registro">📦 Registro Producto</a> <a href="/compras/registro">🛒 Nueva Compra</a>
+            <a href="/clientes/listado">Ver Registros</a>
+            <a href="http://127.0.0.1:8000/docs" target="_blank">API Docs</a>
+        </div>
+    </div>
+    <div class="container">
+        {% block content %}{% endblock %}
+    </div>
+
+    {% block scripts %}{% endblock %}
+</body>
+</html>

@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h2>📦 Registrar Nuevo Producto (Vincular a Empresa)</h2>
+    <p>Asocia un producto a un proveedor existente y sube la imagen a Supabase Storage.</p>
+
+    <div class="registration-area">
+        <form id="productoForm">
+            <div class="form-group">
+                <label for="prod_empresa_id">ID Empresa (Proveedor):</label>
+                <input type="number" id="prod_empresa_id" required placeholder="Ej: 1 (Debe existir)">
+            </div>
+
+            <div class="form-group">
+                <label for="prod_nombre">Nombre del Producto:</label>
+                <input type="text" id="prod_nombre" required placeholder="Ej: iPhone 16 Pro Max">
+            </div>
+
+            <div class="form-group">
+                <label for="prod_descripcion">Descripción (Opcional):</label>
+                <textarea id="prod_descripcion"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="prod_precio">Precio Unitario (USD - Costo Importación):</label>
+                <input type="number" id="prod_precio" required value="800" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="prod_stock">Stock Disponible:</label>
+                <input type="number" id="prod_stock" required value="1000">
+            </div>
+
+            <div class="form-group">
+                <label for="prod_imagen">Imagen del Producto (Subir a Supabase):</label>
+                <input type="file" id="prod_imagen" accept="image/*" onchange="previewImage(event)">
+                <img id="imagePreview" class="image-preview" alt="Vista previa del logo" style="max-width: 200px; max-height: 150px; margin-top: 10px; display: none;">
+            </div>
+
+            <button type="submit" class="btn-action">Registrar Producto</button>
+            <div id="status-producto" class="status-message"></div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+    // 🚨 CONFIGURACIÓN DE SUPABASE (REEMPLAZA ESTOS VALORES REALES)
+    const SUPABASE_URL = 'https://[TU_PROYECTO_ID].supabase.co';
+    const SUPABASE_KEY = '[TU_CLAVE_ANON_PUBLICO]';
+    const SUPABASE_BUCKET = 'productos-imagenes';
+
+    const API_URL = 'http://127.0.0.1:8000';
+
+    function setStatus(elementId, message, type = 'success') {
+        const el = document.getElementById(elementId);
+        el.className = `status-message ${type}`;
+        el.textContent = message;
+        setTimeout(() => { el.textContent = ''; el.className = 'status-message'; }, 7000);
+    }
+
+    function previewImage(event) {
+        const preview = document.getElementById('imagePreview');
+        const file = event.target.files[0];
+        if (file) {
+            preview.src = URL.createObjectURL(file);
+            preview.style.display = 'block';
+        } else {
+            preview.style.display = 'none';
+        }
+    }
+
+    async function uploadImageToSupabase(file) {
+        const fileExt = file.name.split('.').pop();
+        const fileName = `${Date.now()}-${file.name.replace(/\s/g, '_')}`;
+        const filePath = `public/${fileName}`;
+
+        const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${SUPABASE_BUCKET}/${filePath}`;
+
+        const response = await fetch(uploadUrl, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${SUPABASE_KEY}`,
+                'Content-Type': file.type,
+                'x-upsert': 'true'
+            },
+            body: file,
+        });
+
+        if (!response.ok) {
+            throw new Error(`Fallo al subir a Supabase: ${response.statusText}`);
+        }
+
+        const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${SUPABASE_BUCKET}/${filePath}`;
+        return publicUrl;
+    }
+
+    // --- FUNCIÓN REGISTRAR PRODUCTO ---
+    document.getElementById('productoForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        const imageFile = document.getElementById('prod_imagen').files[0];
+        let imageUrl = '';
+
+        // 1. Subir imagen
+        if (imageFile) {
+            setStatus('status-producto', 'Subiendo imagen a Supabase Storage...', 'success');
+            try {
+                imageUrl = await uploadImageToSupabase(imageFile);
+            } catch (error) {
+                setStatus('status-producto', `Error Supabase: ${error.message}`, 'error');
+                return;
+            }
+        }
+
+        // 2. Registrar Producto en FastAPI
+        const payload = {
+            empresa_id: parseInt(document.getElementById('prod_empresa_id').value),
+            nombre: document.getElementById('prod_nombre').value,
+            descripcion: document.getElementById('prod_descripcion').value,
+            precio_usd: parseFloat(document.getElementById('prod_precio').value),
+            stock: parseInt(document.getElementById('prod_stock').value),
+            imagen_url: imageUrl || null
+        };
+
+        try {
+            const response = await fetch(`${API_URL}/productos/`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+            });
+            const data = await response.json();
+
+            if (!response.ok) {
+                setStatus('status-producto', `Error FastAPI: ${data.detail || 'Fallo al registrar producto.'}`, 'error');
+                return;
+            }
+
+            setStatus('status-producto', `Producto "${data.nombre}" registrado. ID: ${data.id}`, 'success');
+        } catch (error) {
+            setStatus('status-producto', 'Error de conexión con la API.', 'error');
+        }
+    });
+</script>
+{% endblock %}
