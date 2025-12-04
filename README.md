@@ -2,77 +2,82 @@
 
 ## ✨ Visión General del Proyecto
 
-El sistema **Distribuidora JS** es una solución de gestión **Business-to-Business (B2B)** enfocada en el sector tecnológico. La plataforma actúa como un puente digital entre **clientes mayoristas en Colombia** y **proveedores fabricantes en China**, automatizando el ciclo de vida de las órdenes de importación.
+El sistema **Distribuidora JS** es una solución web de **Business-to-Business (B2B)** diseñada para modernizar la cadena de suministro en el sector tecnológico. La plataforma actúa como un **agregador digital**, simplificando la conexión entre **clientes mayoristas en Colombia** y **proveedores fabricantes en China**.
 
-El desarrollo cumple con todos los requisitos académicos, incluyendo **CRUD completo**, **Data Enriquecida**, y **despliegue en servidor web** accesible.
+El objetivo es proporcionar **transparencia total en costos** y una gestión centralizada de pedidos, eliminando las complejidades logísticas y financieras de las importaciones.
 
-### 💡 Propuesta de Valor
+| Característica Clave | Tecnología / Implementación |
+| :--- | :--- |
+| **Backend Core** | **FastAPI** (Python 3.11+) | Servicio web de alto rendimiento. |
+| **Persistencia de Datos** | **SQLModel** (ORM) / PostgreSQL o SQLite | Modelado relacional de las tablas `Cliente`, `Empresa`, `Producto`, `Compra`. |
+| **Multimedia** | **Supabase Storage** | Subida directa de imágenes (logos/productos) desde el frontend (JavaScript) a la nube. |
+| **Frontend** | **Jinja2** / HTML5 / CSS (Poppins) | Interfaz moderna, responsive y renderizada por el servidor. |
+| **Visualización** | **Chart.js** | Generación de reportes de negocio (dashboard) para mostrar hallazgos financieros. |
 
-Facilitar el aprovisionamiento de tecnología mediante la transparencia de costos y la consolidación de proveedores.
+---
+
+## 💼 Aspecto Práctico (Lógica de Negocio)
+
+El proyecto simula un flujo de importación mayorista con las siguientes reglas:
+
+### 1. Gestión de Proveedores y Catálogo
+
+* **Proveedor:** Cada **Empresa** registrada es considerada un proveedor de origen chino.
+* **Catálogo Dinámico:** La relación **Empresa (1:N) Producto** permite que cada proveedor maneje su propio inventario (`stock`, `precio_usd`, `imagen_url`).
+* **Regla de Consistencia:** En la creación de una Compra, el sistema valida que el Producto seleccionado realmente pertenezca a la Empresa indicada.
+
+### 2. Flujo de Compra y Alta Interactividad
+
+* **Formulario Interactivo:** La página de **Nueva Compra** utiliza **JavaScript** para hacer una petición a la API (`GET /productos/{empresa_id}`). Al ingresar el ID del proveedor, el formulario carga y muestra **sólo los productos** que esa empresa tiene disponibles, haciendo el proceso de pedido rápido y preciso.
+* **Precios Locales:** Los precios de los productos se muestran en **Pesos Colombianos (COP)** en el catálogo (simulando una tasa de cambio de 1 USD = 4000 COP) para una mejor contextualización del mercado objetivo.
+
+### 3. Data Enriquecida y Hallazgos Financieros
+
+* **Cálculo Automático de Margen:** Al registrar una nueva Compra (`POST /compras/`), el backend ejecuta la siguiente regla de negocio:
+    * **Margen Estimado (35%)** se calcula sobre el `precio_total` de importación.
+* **Impacto en el Dashboard:** Este dato enriquecido (`margen_estimado`) se persiste en la DB y alimenta el Dashboard, permitiendo la visualización inmediata de la **Venta Potencial Total** y el **Margen Bruto Acumulado**, cumpliendo el requisito de "hallazgos útiles".
+
+---
+
+## 💻 Aspecto Técnico (Arquitectura FastAPI)
+
+### 1. Modelo Relacional y Persistencia
+
+| Modelo | Clave Foránea (FK) | Relación |
+| :--- | :--- | :--- |
+| **Cliente** | N/A | 1:N con Compra |
+| **Empresa** | N/A | 1:N con Producto, 1:N con Compra |
+| **Producto** | `empresa_id` | N:1 con Empresa |
+| **Compra** | `cliente_id`, `empresa_id`, `producto_id` | N:1 con Cliente, Empresa, Producto |
+
+### 2. Desacoplamiento de Servicios y Escalabilidad
+
+* **Subida de Multimedia:** Se evita la sobrecarga del servidor FastAPI. El JavaScript del frontend realiza la petición **POST** de la imagen binaria **directamente a Supabase Storage**, recibiendo a cambio la URL pública, que luego es guardada por FastAPI en la DB.
+* **Ambiente de Despliegue:** El archivo `config.py` permite alternar sin esfuerzo entre la base de datos de desarrollo (`sqlite:///./distribuidora_datos.db`) y la base de datos de producción remota (`postgresql://...`).
+
+### 3. Rutas Clave de la API (Endpoints)
+
+| Método | Endpoint | Funcionalidad |
+| :--- | :--- | :--- |
+| **GET** | `/` | Vista de inicio y Catálogo (Renderiza `index.html`). |
+| **GET** | `/productos/{id}` | **API Interactiva:** Devuelve productos de una empresa específica. |
+| **POST** | `/productos/` | Registra Producto (Verifica existencia de Empresa). |
+| **POST** | `/empresas/` | Registra Proveedor (Guarda URL de logo de Supabase). |
+| **POST** | `/compras/` | **Transacción de Negocio:** Valida FK y calcula Margen. |
+| **GET** | `/api/reportes/` | Genera los datos JSON para las gráficas del Dashboard. |
 
 ***
 
-## 🛠️ Stack Tecnológico Detallado
+## ⚙️ Guía de Instalación y Uso
 
-| Componente | Tecnología | Versión | Propósito Principal |
-| :--- | :--- | :--- | :--- |
-| **Backend Core** | **Python** | 3.11+ | Lógica del servidor y ejecución de la API. |
-| **Framework API** | **FastAPI** | Última | Creación de endpoints HTTP de alto rendimiento. |
-| **Persistencia** | **SQLModel** | Última | Modelado ORM y gestión de la base de datos (PostgreSQL/SQLite). |
-| **Frontend/Vistas** | **Jinja2** / HTML / CSS (Poppins) | N/A | Renderizado de formularios, listados y diseño "confort". |
-| **Multimedia** | **Supabase Storage** | N/A | Almacenamiento directo de logos y fotos de productos. |
-| **Visualización** | **Chart.js** | N/A | Presentación de reportes y estadísticas en el Dashboard. |
-| **Despliegue (URL)** | **Render** | N/A | Alojamiento para acceso público (URL disponible). |
+### A. Pre-requisitos
 
-***
+* Instalar dependencias: `pip install -r requirements.txt`
+* Crear carpetas: `mkdir static` && `mkdir static/images`
 
-## ⚙️ Arquitectura de Datos y Lógica de Negocio
+### B. Ejecución
 
-### 1. Diagrama de Clases UML (Modelos y Relaciones)
+Asegúrese de estar en la carpeta raíz (`main.py`):
 
-El sistema se basa en cuatro modelos interconectados para gestionar la relación Proveedor-Producto-Cliente-Pedido.
-
-```plantuml
-@startuml
-skinparam ClassAttributeIconStyle relevant
-
-class Cliente {
-    + id : int <<PK>>
-    + nombre : str
-    + email : str <<Unique>>
-    + direccion_envio : str
-}
-
-class Empresa {
-    + id : int <<PK>>
-    + nombre_empresa : str <<Unique>>
-    + tipo_producto : str
-    + imagen_url : str <<Multimedia>>
-}
-
-class Producto {
-    + id : int <<PK>>
-    + empresa_id : int <<FK>>
-    + nombre : str
-    + precio_usd : float
-    + stock : int
-    + imagen_url : str <<Multimedia>>
-}
-
-class Compra {
-    + id : int <<PK>>
-    + cliente_id : int <<FK>>
-    + empresa_id : int <<FK>>
-    + producto_id : int <<FK>>
-    + cantidad : int
-    + estado_pedido : str
-    -- Data Enriquecida --
-    + precio_total : float
-    + margen_estimado : float
-}
-
-Cliente "1" -- "N" Compra : realiza
-Empresa "1" -- "N" Producto : ofrece
-Empresa "1" -- "N" Compra : es_proveedor_de
-Producto "1" -- "N" Compra : se_compra
-@enduml
+```bash
+uvicorn main:app --reload
