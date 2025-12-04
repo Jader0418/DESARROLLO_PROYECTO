@@ -1,42 +1,36 @@
-# 🚀 Distribuidora JS | Sistema de Gestión de Importaciones B2B
+# 🚀 Distribuidora JS | Plataforma de Gestión de Importaciones B2B
 
-## 🎯 Descripción del Proyecto
+## ✨ Visión General del Proyecto
 
-El sistema **Distribuidora JS** es una plataforma web desarrollada para facilitar el comercio B2B (Business-to-Business) en el sector tecnológico. Actúa como un *agregador* que conecta compradores mayoristas en Colombia con proveedores fabricantes en China.
+El sistema **Distribuidora JS** es una solución de gestión **Business-to-Business (B2B)** enfocada en el sector tecnológico. La plataforma actúa como un puente digital entre **clientes mayoristas en Colombia** y **proveedores fabricantes en China**, automatizando el ciclo de vida de las órdenes de importación.
 
-El proyecto cumple con los requisitos de un sistema CRUD completo, gestión de reglas de negocio, manejo de multimedias (subida a la nube) y presentación de informes/estadísticas.
+El desarrollo cumple con todos los requisitos académicos, incluyendo **CRUD completo**, **Data Enriquecida**, y **despliegue en servidor web** accesible.
 
-### Funcionalidades y Reglas de Negocio Implementadas
+### 💡 Propuesta de Valor
 
-| Funcionalidad | Cumplimiento | Detalle |
-| :--- | :--- | :--- |
-| **Persistencia de Datos** | ✅ Servidor de Base de Datos | **PostgreSQL (Render)** o **SQLite (Local)** configurado vía `config.py`. |
-| **CRUD & Relaciones** | ✅ Modelos con Relación | **Cliente (1:N) Compra**, **Empresa (1:N) Producto**, y **Producto (N:1) Compra**. |
-| **Data Enriquecida** | ✅ Cálculo Automático | Se calcula un **Margen de Ganancia Estimado del 35%** en cada orden de Compra. |
-| **Multimedia** | ✅ Subida a Servidor Externo | Subida de logos de Empresas y fotos de Productos directamente a **Supabase Storage**. |
-| **Interacción** | ✅ Formularios HTML Interactivos | El formulario de Compra es dinámico: los productos cambian según el proveedor seleccionado. |
-| **Reportes** | ✅ Dashboard con Estadísticas | Muestra el **Costo Total de Importación** y el **Margen Bruto Estimado** con gráficos (Chart.js). |
-| **Usabilidad** | ✅ Estilos y Búsqueda | Diseño "confort" con tipografía Poppins y funcionalidad de **Búsqueda Inmersa** en el listado de Proveedores. |
+Facilitar el aprovisionamiento de tecnología mediante la transparencia de costos y la consolidación de proveedores.
 
 ***
 
-## 🛠️ Stack Tecnológico
+## 🛠️ Stack Tecnológico Detallado
 
-| Componente | Tecnología | Propósito |
-| :--- | :--- | :--- |
-| **Backend / API** | Python 3.11, **FastAPI** | Servicio web de alto rendimiento y lógica de negocio. |
-| **Base de Datos** | **SQLModel** (ORM) / **SQLite** (Dev) | ORM que facilita la conexión y el manejo de tablas. |
-| **Multimedia** | **Supabase Storage** | Almacenamiento de archivos en la nube y generación de URLs públicas. |
-| **Despliegue** | **Render** | Alojamiento para acceso público a la URL. |
-| **Frontend** | HTML5, Jinja2, **JavaScript (Fetch API)** | Manejo de vistas y peticiones asíncronas para el CRUD. |
+| Componente | Tecnología | Versión | Propósito Principal |
+| :--- | :--- | :--- | :--- |
+| **Backend Core** | **Python** | 3.11+ | Lógica del servidor y ejecución de la API. |
+| **Framework API** | **FastAPI** | Última | Creación de endpoints HTTP de alto rendimiento. |
+| **Persistencia** | **SQLModel** | Última | Modelado ORM y gestión de la base de datos (PostgreSQL/SQLite). |
+| **Frontend/Vistas** | **Jinja2** / HTML / CSS (Poppins) | N/A | Renderizado de formularios, listados y diseño "confort". |
+| **Multimedia** | **Supabase Storage** | N/A | Almacenamiento directo de logos y fotos de productos. |
+| **Visualización** | **Chart.js** | N/A | Presentación de reportes y estadísticas en el Dashboard. |
+| **Despliegue (URL)** | **Render** | N/A | Alojamiento para acceso público (URL disponible). |
 
 ***
 
-## 📊 Documentación de Modelos y Procesos
+## ⚙️ Arquitectura de Datos y Lógica de Negocio
 
-### 1. Diagrama de Clases UML (Estructura de la DB)
+### 1. Diagrama de Clases UML (Modelos y Relaciones)
 
-Muestra la estructura de las tablas (`table=True`) y las relaciones 1:N que utiliza el sistema.
+El sistema se basa en cuatro modelos interconectados para gestionar la relación Proveedor-Producto-Cliente-Pedido.
 
 ```plantuml
 @startuml
@@ -44,37 +38,25 @@ skinparam ClassAttributeIconStyle relevant
 
 class Cliente {
     + id : int <<PK>>
-    -- Datos Personales --
     + nombre : str
     + email : str <<Unique>>
-    + pais : str
     + direccion_envio : str
-    -- Relación --
-    + compras : List<Compra>
 }
 
 class Empresa {
     + id : int <<PK>>
-    -- Datos de Proveedor --
     + nombre_empresa : str <<Unique>>
-    + contacto_email : str
     + tipo_producto : str
     + imagen_url : str <<Multimedia>>
-    -- Relación --
-    + productos : List<Producto>
-    + compras : List<Compra>
 }
 
 class Producto {
     + id : int <<PK>>
     + empresa_id : int <<FK>>
-    -- Detalle --
     + nombre : str
     + precio_usd : float
     + stock : int
     + imagen_url : str <<Multimedia>>
-    -- Relación --
-    + compras : List<Compra>
 }
 
 class Compra {
@@ -82,17 +64,15 @@ class Compra {
     + cliente_id : int <<FK>>
     + empresa_id : int <<FK>>
     + producto_id : int <<FK>>
-    -- Datos de Pedido --
     + cantidad : int
-    + precio_total : float
     + estado_pedido : str
     -- Data Enriquecida --
+    + precio_total : float
     + margen_estimado : float
-    + created_at : datetime
 }
 
 Cliente "1" -- "N" Compra : realiza
 Empresa "1" -- "N" Producto : ofrece
 Empresa "1" -- "N" Compra : es_proveedor_de
-Producto "1" -- "N" Compra : contiene
-@enduml 
+Producto "1" -- "N" Compra : se_compra
+@enduml
