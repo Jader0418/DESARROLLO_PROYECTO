@@ -13,34 +13,45 @@
             --color-contraste: #f39c12;
             --color-fondo: #f8f9fa;
             --color-texto: #333;
+            --badge-bg: #e74c3c;
+            --card-radius: 12px;
         }
 
         body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: var(--color-fondo); color: var(--color-texto); }
         .header { background-color: var(--color-principal); color: white; padding: 30px 40px; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); }
-        .nav-buttons { display: flex; gap: 15px; margin-top: 20px; }
+        .nav-buttons { display: flex; gap: 15px; margin-top: 20px; flex-wrap: wrap; }
         .nav-buttons button, .btn-action {
-            background-color: var(--color-secundario); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: background-color 0.3s, transform 0.1s;
+            background-color: var(--color-secundario); color: white; border: none; padding: 12px 25px; border-radius: 8px; cursor: pointer; font-size: 1em; transition: background-color 0.3s, transform 0.15s;
         }
         .nav-buttons button:hover, .btn-action:hover { background-color: var(--color-principal); transform: translateY(-2px); }
         .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
         .content-section { display: none; animation: fadeIn 0.5s; margin-top: 25px; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        .registration-area, .product-area { background: white; padding: 30px; border-radius: 12px; box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); }
+        .registration-area, .product-area { background: white; padding: 30px; border-radius: var(--card-radius); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08); }
         .form-group { margin-bottom: 15px; }
         .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--color-principal); }
         .form-group input { width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 6px; box-sizing: border-box; transition: border-color 0.3s; }
         .status-message { padding: 10px; margin-top: 15px; border-radius: 6px; font-weight: bold; }
         .success { background-color: #d4edda; color: #1e8449; }
         .error { background-color: #f8d7da; color: #dc3545; }
-        .productos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; margin-top: 20px; }
-        .producto-card { border: 1px solid #eee; border-radius: 8px; overflow: hidden; text-align: center; transition: box-shadow 0.3s; }
-        .producto-card:hover { box-shadow: 0 8px 15px rgba(52, 152, 219, 0.2); }
-        .producto-card img { width: 100%; height: 180px; object-fit: cover; }
-        .producto-info { padding: 15px; }
-        .precio { color: var(--color-contraste); font-size: 1.6em; font-weight: 700; }
-        .producto-info h3 { margin-top: 5px; color: var(--color-principal); }
+
+
+
+
+        /* Banners / anuncios */
+        .ad-banner { width: 100%; border-radius: 12px; overflow: hidden; display:flex; gap:12px; align-items:center; padding: 16px; box-shadow: 0 8px 20px rgba(0,0,0,0.06); background: linear-gradient(90deg, #ffffff, #f2f9ff); margin-bottom: 20px; }
+        .ad-banner .ad-left { flex: 1; }
+        .ad-banner .ad-right { width: 300px; display:flex; align-items:center; justify-content:center; }
+        .ad-banner img { max-width:100%; border-radius: 8px; }
+        .ad-title { font-size: 1.3em; color: var(--color-principal); margin-bottom: 6px; }
+        .ad-cta { background: var(--color-contraste); color: white; padding: 10px 14px; border-radius: 8px; font-weight:700; cursor:pointer; border:none; }
+
+        .small-btn { background: #efefef; border-radius: 8px; padding: 8px 10px; border: none; cursor: pointer; }
+
         .nav-buttons .active { background-color: var(--color-contraste); }
+
         .image-preview { margin-top: 10px; width: 100%; max-height: 150px; object-fit: contain; border: 1px solid #ddd; display: none; }
+        .top-vendidos-carousel::-webkit-scrollbar { display: none; }
     </style>
 </head>
 <body>
@@ -61,15 +72,31 @@
     <div class="container">
 
         <div class="content-section" id="inicio" style="display: block;">
+            <!-- AD BANNER -->
+            <div class="ad-banner" id="adBanner">
+                <div class="ad-left">
+                    <div class="ad-title" id="adTitle">¡Promoción especial: Envíos gratis en pedidos superiores a $1,000 USD!</div>
+                    <div class="ad-desc" id="adDesc">Consigue descuentos exclusivos en smartphones y laptops esta semana. Stock limitado — ¡aprovecha ahora!</div>
+                    <div style="margin-top:10px;">
+                        <button class="ad-cta" onclick="onAdCtaClick()">Ver ofertas</button>
+                        <button class="small-btn" onclick="prevTop()">‹</button>
+                        <button class="small-btn" onclick="nextTop()">›</button>
+                    </div>
+                </div>
+                <div class="ad-right">
+                    <img src="https://images.unsplash.com/photo-1511707171634-5f897ff02aa9?q=80&w=800&auto=format&fit=crop&ixlib=rb-4.0.3&s=placeholder" alt="Anuncio">
+                </div>
+            </div>
+
+
+
             <h2>Productos Disponibles para Importación</h2>
             <div class="product-area">
-                <div class="productos-grid">
+                <div class="productos-grid" id="catalogGrid">
 
                     <div class="producto-card">
-
-
-
                         <div class="producto-info">
+                            <img src="https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/IMAGEN_IPHONE.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0lNQUdFTl9JUEhPTkUud2VicCIsImlhdCI6MTc2NDg4MDIwOSwiZXhwIjoxNzY1NDg1MDA5fQ.t7n7hs7Hq6mh_xbG-_sbObapIuCpS5lS9l0yi-G3p4E" alt="iPhone 16 Pro Max">
                             <h3>iPhone 16 Pro Max</h3>
                             <p>Precio Importación (USD): $1100.00</p>
                             <p class="precio">COP: $4'400.000</p>
@@ -78,8 +105,8 @@
                     </div>
 
                     <div class="producto-card">
-
                         <div class="producto-info">
+                            <img src="https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/AUDIFONOS.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0FVRElGT05PUy53ZWJwIiwiaWF0IjoxNzY0ODgwMjcyLCJleHAiOjE3NjU0ODUwNzJ9.HFw7y_ehDwt7M-3-Vw8JwL51Gc3ZpSWCjFXfnoJCVJc" alt="Audífonos">
                             <h3>Audífonos Noise-Cancel HiFi</h3>
                             <p>Precio Importación (USD): $180.00</p>
                             <p class="precio">COP: $720.000</p>
@@ -88,8 +115,8 @@
                     </div>
 
                     <div class="producto-card">
-
                         <div class="producto-info">
+                            <img src="https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/LAPTOP.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0xBUFRPUC53ZWJwIiwiaWF0IjoxNzY0ODgwNDM0LCJleHAiOjE3NjU0ODUyMzR9.xY6bU7pToxPdFsF5iMA-PK3muiubWyP3rxXO72298O8" alt="Laptop Gamer">
                             <h3>Laptop Gamer RTX 5080</h3>
                             <p>Precio Importación (USD): $1750.00</p>
                             <p class="precio">COP: $7'000.000</p>
@@ -98,9 +125,8 @@
                     </div>
 
                     <div class="producto-card">
-
-
                         <div class="producto-info">
+                            <img src="https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/DRON.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0RST04ud2VicCIsImlhdCI6MTc2NDg4MDU1OSwiZXhwIjoxNzY1NDg1MzU5fQ.f1iLOImgPN6Fcx7NeWuWrNgAR40jTnXGmNrH9pca--o" alt="Drone 4K Pro">
                             <h3>Drone 4K Pro (Gama Alta)</h3>
                             <p>Precio Importación (USD): $210.00</p>
                             <p class="precio">COP: $840.000</p>
@@ -194,7 +220,7 @@
 
         const API_URL = 'http://127.0.0.1:8000';
 
-        // --- FUNCIONES DE UTILIDAD ---
+        // --- UTILIDADES ---
         function setStatus(elementId, message, type = 'success') {
             const el = document.getElementById(elementId);
             el.className = `status-message ${type}`;
@@ -202,7 +228,6 @@
             setTimeout(() => { el.textContent = ''; el.className = 'status-message'; }, 7000);
         }
 
-        // --- FUNCIÓN CLAVE: Muestra/Oculta Secciones (para los botones Cliente/Empresa) ---
         function showSection(sectionId, clickedButton) {
             document.querySelectorAll('.content-section').forEach(section => {
                 section.style.display = 'none';
@@ -217,12 +242,13 @@
             }
         }
 
-        // --- INICIALIZACIÓN: Muestra el Catálogo por defecto ---
         window.onload = () => {
             showSection('inicio', document.querySelector('.nav-buttons button:first-child'));
+            initTopProducts();
+            initAds();
         };
 
-        // Función para previsualizar la imagen antes de subir
+        // Previsualizar imagen
         function previewImage(event) {
             const preview = document.getElementById('imagePreview');
             const file = event.target.files[0];
@@ -234,8 +260,165 @@
             }
         }
 
+        // ----------------------
+        // TOP PRODUCTS (Front + Fetch)
+        // ----------------------
+        let topProducts = [];
+        const topCarousel = document.getElementById('topCarousel');
+
+        async function initTopProducts() {
+            try {
+                const res = await fetch(`${API_URL}/productos/top`);
+                if (res.ok) {
+                    topProducts = await res.json();
+                } else {
+                    console.warn('No se encontró /productos/top, usando datos de ejemplo');
+                    topProducts = sampleTopProducts();
+                }
+            } catch (err) {
+                console.warn('Error al conectar con API para top productos, usando ejemplo.', err);
+                topProducts = sampleTopProducts();
+            }
+            renderTopProducts();
+            setInterval(() => {
+                autoScrollTopCarousel();
+            }, 5000);
+        }
+
+        function sampleTopProducts() {
+            // Uso las mismas URLs que proporcionaste en el catálogo
+            return [
+                {
+                    id: 1,
+                    nombre: 'iPhone 16 Pro Max',
+                    price_usd: 1100,
+                    price_cop: "4'400.000",
+                    provider: 'Foxconn/Apple SCM',
+                    image_url: 'https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/IMAGEN_IPHONE.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0lNQUdFTl9JUEhPTkUud2VicCIsImlhdCI6MTc2NDg4MDIwOSwiZXhwIjoxNzY1NDg1MDA5fQ.t7n7hs7Hq6mh_xbG-_sbObapIuCpS5lS9l0yi-G3p4E',
+                    sales_count: 124
+                },
+                {
+                    id: 2,
+                    nombre: 'Laptop Gamer RTX 5080',
+                    price_usd: 1750,
+                    price_cop: "7'000.000",
+                    provider: 'Future Computing Co.',
+                    image_url: 'https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/LAPTOP.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0xBUFRPUC53ZWJwIiwiaWF0IjoxNzY0ODgwNDM0LCJleHAiOjE3NjU0ODUyMzR9.xY6bU7pToxPdFsF5iMA-PK3muiubWyP3rxXO72298O8',
+                    sales_count: 97
+                },
+                {
+                    id: 3,
+                    nombre: 'Audífonos Noise-Cancel HiFi',
+                    price_usd: 180,
+                    price_cop: "720.000",
+                    provider: 'AudioTech Pro',
+                    image_url: 'https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/AUDIFONOS.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0FVRElGT05PUy53ZWJwIiwiaWF0IjoxNzY0ODgwMjcyLCJleHAiOjE3NjU0ODUwNzJ9.HFw7y_ehDwt7M-3-Vw8JwL51Gc3ZpSWCjFXfnoJCVJc',
+                    sales_count: 85
+                },
+                {
+                    id: 4,
+                    nombre: 'Drone 4K Pro (Gama Alta)',
+                    price_usd: 210,
+                    price_cop: "840.000",
+                    provider: 'SkyCam Electronics',
+                    image_url: 'https://wybyxgxanuenvmgoechw.supabase.co/storage/v1/object/sign/DESARROLLO_SOFTWARE/DRON.webp?token=eyJraWQiOiJzdG9yYWdlLXVybC1zaWduaW5nLWtleV85OTA1ZmEyYi0zM2RmLTQ5NGEtYTJhMi1jMjQ2ZGU4YWI4NjQiLCJhbGciOiJIUzI1NiJ9.eyJ1cmwiOiJERVNBUlJPTExPX1NPRlRXQVJFL0RST04ud2VicCIsImlhdCI6MTc2NDg4MDU1OSwiZXhwIjoxNzY1NDg1MzU5fQ.f1iLOImgPN6Fcx7NeWuWrNgAR40jTnXGmNrH9pca--o',
+                    sales_count: 64
+                }
+            ];
+        }
+
+        function renderTopProducts() {
+            const container = document.getElementById('topCarousel');
+            container.innerHTML = '';
+            topProducts.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'top-card';
+                card.innerHTML = `
+                    <img src="${p.image_url || 'https://via.placeholder.com/320x160?text=Producto'}" alt="${escapeHtml(p.nombre)}">
+                    <div class="top-info">
+                        <div style="display:flex; justify-content:space-between; align-items:center;">
+                            <strong>${escapeHtml(p.nombre)}</strong>
+                            <span class="top-badge">#${p.sales_count}</span>
+                        </div>
+                        <div class="top-stats">
+                            ${p.provider ? escapeHtml(p.provider) + ' • ' : ''} USD ${p.price_usd} — COP ${p.price_cop}
+                        </div>
+                        <div style="margin-top:8px; display:flex; gap:8px;">
+                            <button class="btn-action" onclick="verProducto(${p.id})">Ver</button>
+                            <button class="small-btn" onclick="agregarAlCarrito(${p.id})">Agregar</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function escapeHtml(text) {
+            if (!text) return '';
+            return text.replace(/[&<>"'`=\/]/g, function (s) {
+                return ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[s]);
+            });
+        }
+
+        function verProducto(id) {
+            window.location.href = `/productos/${id}`;
+        }
+
+        function agregarAlCarrito(id){
+            alert('Producto ' + id + ' agregado al carrito (demo).');
+        }
+
+        function autoScrollTopCarousel(){
+            const el = document.getElementById('topCarousel');
+            if (!el) return;
+            const scrollAmount = 280;
+            if (el.scrollWidth - el.scrollLeft <= el.clientWidth + 10) {
+                el.scrollTo({ left: 0, behavior: 'smooth' });
+            } else {
+                el.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            }
+        }
+
+        function prevTop(){
+            document.getElementById('topCarousel').scrollBy({ left: -300, behavior: 'smooth' });
+        }
+        function nextTop(){
+            document.getElementById('topCarousel').scrollBy({ left: 300, behavior: 'smooth' });
+        }
+
+        // ----------------------
+        // ADS (Banners)
+        // ----------------------
+        const adBanner = document.getElementById('adBanner');
+        async function initAds(){
+            try {
+                const res = await fetch(`${API_URL}/anuncios/active`);
+                if (res.ok) {
+                    const ads = await res.json();
+                    if (ads.length) showAd(ads[0]);
+                }
+            } catch (err) {
+                console.warn('No se cargaron anuncios desde API, usando banner por defecto.');
+            }
+        }
+
+        function showAd(ad){
+            document.getElementById('adTitle').textContent = ad.title || 'Oferta especial';
+            document.getElementById('adDesc').textContent = ad.description || '';
+            const img = adBanner.querySelector('img');
+            if (ad.image_url) img.src = ad.image_url;
+            const cta = adBanner.querySelector('.ad-cta');
+            if (ad.cta_url) {
+                cta.onclick = () => { window.location.href = ad.cta_url; }
+            }
+        }
+
+        function onAdCtaClick(){
+            window.location.href = '/ofertas';
+        }
+
         // -------------------------------------------------------------------
-        // FUNCIÓN CLAVE: SUBIR ARCHIVO DIRECTO A SUPABASE STORAGE
+        // SUBIR IMAGEN A SUPABASE
         // -------------------------------------------------------------------
         async function uploadImageToSupabase(file, bucketName) {
             const fileExt = file.name.split('.').pop();
@@ -245,11 +428,11 @@
             const uploadUrl = `${SUPABASE_URL}/storage/v1/object/${bucketName}/${filePath}`;
 
             const response = await fetch(uploadUrl, {
-                method: 'POST', // Usamos POST para subir
+                method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${SUPABASE_KEY}`,
                     'Content-Type': file.type,
-                    'x-upsert': 'true' // Reemplazar si el archivo ya existe
+                    'x-upsert': 'true'
                 },
                 body: file,
             });
@@ -258,14 +441,12 @@
                 throw new Error(`Fallo al subir a Supabase: ${response.statusText}`);
             }
 
-            // Generar la URL pública para el registro en la DB
             const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/${bucketName}/${filePath}`;
             return publicUrl;
         }
 
-
         // -------------------------------------------------------------------
-        // 1. REGISTRO DE CLIENTE
+        // FORMS: cliente / empresa (se mantienen)
         // -------------------------------------------------------------------
         document.getElementById('clienteForm').addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -299,21 +480,15 @@
             }
         });
 
-
-        // -------------------------------------------------------------------
-        // 2. REGISTRO DE EMPRESA (Subida a Supabase + Registro en FastAPI)
-        // -------------------------------------------------------------------
         document.getElementById('empresaForm').addEventListener('submit', async (e) => {
             e.preventDefault();
 
             const imageFile = document.getElementById('e_imagen').files[0];
             let imageUrl = '';
 
-            // 1. Subir la imagen a Supabase (si existe)
             if (imageFile) {
                 setStatus('status-empresa', 'Subiendo imagen a Supabase Storage...', 'success');
                 try {
-                    // Usamos el bucket definido al inicio
                     imageUrl = await uploadImageToSupabase(imageFile, SUPABASE_BUCKET);
                 } catch (error) {
                     setStatus('status-empresa', `Error Supabase: ${error.message}`, 'error');
@@ -321,7 +496,6 @@
                 }
             }
 
-            // 2. Registrar la Empresa con la URL de la imagen (o sin ella)
             const payload = {
                 nombre_empresa: document.getElementById('e_nombre').value,
                 contacto_nombre: document.getElementById('e_contacto').value,
@@ -352,3 +526,116 @@
     </script>
 </body>
 </html>
+
+
+<style>
+        :root {
+            --color-principal: #1a5276; /* Azul Oscuro (Header) */
+            --color-secundario: #5499c7; /* Azul Medio (Botones) */
+            --color-contraste: #f39c12; /* Naranja Brillante (Éxito/Foco) */
+            --color-fondo: #f8f9fa; /* Fondo Blanco Grisáceo */
+            --color-texto: #333;
+            --color-sombra-light: rgba(0, 0, 0, 0.1);
+        }
+
+        body { font-family: 'Poppins', sans-serif; margin: 0; padding: 0; background-color: var(--color-fondo); color: var(--color-texto); line-height: 1.6; }
+        .header { background-color: var(--color-principal); color: white; padding: 30px 40px; box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2); }
+        .header h1 { margin: 0; font-weight: 600; font-size: 1.8em; }
+        .nav-buttons { display: flex; gap: 10px; margin-top: 20px; flex-wrap: wrap; }
+
+        /* Efecto Interactivo para Botones de Navegación */
+        .nav-buttons button, .btn-action {
+            background-color: var(--color-secundario);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.9em;
+            font-weight: 500;
+            transition: all 0.3s ease; /* Transición suave para todos los efectos */
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+        }
+
+        /* Efecto Hover: Cambia color y levanta el botón */
+        .nav-buttons button:hover, .btn-action:hover {
+            background-color: #34495e;
+            transform: translateY(-3px); /* Levanta el botón al pasar el mouse */
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+
+        /* Estilo para el botón activo */
+        .nav-buttons .active {
+            background-color: var(--color-contraste);
+            transform: translateY(-1px);
+        }
+
+        .container { max-width: 1400px; margin: 30px auto; padding: 0 20px; }
+        .content-section { display: none; animation: fadeIn 0.5s; margin-top: 25px; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        /* --- Registration & Form Styling --- */
+        .registration-area, .product-area {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+            border-left: 5px solid var(--color-secundario); /* Borde de contraste */
+        }
+
+        .form-group { margin-bottom: 18px; }
+        .form-group label { display: block; font-weight: 600; margin-bottom: 5px; color: var(--color-principal); }
+        .form-group input, .form-group textarea {
+            width: 100%;
+            padding: 12px; /* Mayor padding para mejor toque */
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            box-sizing: border-box;
+            transition: border-color 0.3s, box-shadow 0.3s;
+        }
+
+        /* Efecto Focus: Resalta el campo activo */
+        .form-group input:focus, .form-group textarea:focus {
+            border-color: var(--color-contraste);
+            box-shadow: 0 0 5px rgba(243, 156, 18, 0.5);
+            outline: none;
+        }
+
+        .status-message { padding: 12px; margin-top: 15px; border-radius: 6px; font-weight: 600; text-align: center; }
+        .success { background-color: #d4edda; color: #1e8449; }
+        .error { background-color: #f8d7da; color: #dc3545; }
+
+        /* --- Catálogo de Productos (Interactivo) --- */
+        .productos-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-top: 30px; }
+
+        .producto-card {
+            border: 1px solid var(--color-borde);
+            border-radius: 10px;
+            overflow: hidden;
+            text-align: center;
+            transition: box-shadow 0.4s ease, transform 0.4s ease;
+            background-color: white;
+        }
+
+        /* Efecto Hover: Sombra y Leve Escala */
+        .producto-card:hover {
+            box-shadow: 0 10px 20px rgba(52, 152, 219, 0.25);
+            transform: scale(1.03); /* Leve aumento de tamaño */
+        }
+
+        .producto-card img { width: 100%; height: 180px; object-fit: cover; border-bottom: 1px solid #eee; }
+        .producto-info { padding: 15px; }
+
+        .precio {
+            color: var(--color-contraste);
+            font-size: 1.8em;
+            font-weight: 700;
+            margin-top: 10px;
+            display: block;
+        }
+
+        .producto-info h3 { margin-top: 5px; color: var(--color-principal); font-weight: 600; }
+        .producto-info p { margin: 3px 0; font-size: 0.9em; color: #777; }
+        .image-preview { border-radius: 6px; }
+
+    </style>
